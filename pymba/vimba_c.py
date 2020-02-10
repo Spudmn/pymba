@@ -450,7 +450,15 @@ vmb_ancillary_data_close = _vimba_lib.VmbAncillaryDataClose
 vmb_interface_close.restype = c_int32
 vmb_interface_close.argtypes = (c_void_p, )
 
-# todo VmbMemoryRead
+vmb_memory_read = _vimba_lib.VmbMemoryRead
+vmb_memory_read.restype = c_int32
+vmb_memory_read.argtypes = (c_void_p,
+                               c_uint64,
+                               c_uint32,
+                               POINTER(c_int8),
+                               POINTER(c_uint32))
+
+
 # todo VmbMemoryWrite
 
 vmb_registers_read = _vimba_lib.VmbRegistersRead

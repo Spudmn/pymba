@@ -1,4 +1,4 @@
-from ctypes import byref, sizeof, c_void_p, c_uint32, c_uint64, c_bool
+from ctypes import byref, sizeof, c_void_p, c_uint32, c_uint64, c_bool, c_int8, create_string_buffer, cast, POINTER
 from typing import List, Optional, Callable, Dict, Tuple
 
 from .vimba_exception import VimbaException
@@ -131,6 +131,30 @@ class VimbaObject:
             raise VimbaException(error)
 
         return is_done.value
+
+    # todo test
+    def read_memory(self, address: int) -> int:
+        """
+        Read 512 bytes from memory of the module (camera).
+        :param address: the address of the Memory to read.
+        """
+        
+        mem_address = c_uint64(address)
+        read_count = c_uint32(512)
+        mem_data = create_string_buffer(512)
+        num_complete_reads = c_uint32()
+        error = vimba_c.vmb_memory_read(self._handle,
+                                           mem_address,
+                                           read_count,
+                                           cast(mem_data,POINTER(c_int8)),
+                                           byref(num_complete_reads))
+        
+        if error:
+            raise VimbaException(error)
+
+        return bytes(mem_data)
+
+
 
     # todo test
     def read_register(self, address: int) -> int:
